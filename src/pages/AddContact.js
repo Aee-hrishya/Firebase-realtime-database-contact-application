@@ -20,7 +20,7 @@ import {
 import { readAndCompressImage } from "browser-image-resizer";
 
 // configs for image resizing
-//TODO: add image configurations
+// Adding image configurations
 import { imageConfig } from "../utils/config";
 
 import { MdAddCircleOutline } from "react-icons/md";
@@ -29,12 +29,13 @@ import { MdAddCircleOutline } from "react-icons/md";
 import { v4 } from "uuid";
 
 // context stuffs
-import { ContactContext } from "../context/Context";
+import ContactContext from "../context/Context";
 import { CONTACT_TO_UPDATE } from "../context/action.types";
 
 import { useNavigate } from "react-router-dom";
 
 import { toast } from "react-toastify";
+
 
 const AddContact = () => {
 
@@ -62,6 +63,8 @@ const AddContact = () => {
   // then setting state with the value of the contact
   // will change only when the contact to update changes
   useEffect(() => {
+
+    //Basically if contactToUpdate has a value we preload it everytime there is a change in the contactToUpdate
     if (contactToUpdate) {
       setName(contactToUpdate.name);
       setEmail(contactToUpdate.email);
@@ -70,7 +73,7 @@ const AddContact = () => {
       setStar(contactToUpdate.star);
       setDownloadUrl(contactToUpdate.picture);
 
-      // also setting is update to true to make the update action instead the addContact action
+      // also setting is updated to true to make the update action instead the addContact action
       setIsUpdate(true);
     }
   }, [contactToUpdate]);
@@ -95,9 +98,10 @@ const AddContact = () => {
       // Here we have everything related to the firebase docs and this remains the same only the file names change
 
       //Now below we will be configuring the upload task, refer firebase docs for this everything is mentioned there
-      const storageRef = await firebase.storage.ref(); //We get this from firebase storage where we have the reference
-
-      var uploadTask = storageRef.child("/images" + file.name).put(resizedImage, metadata); //All these methods are there in firebase docs
+      const storageRef = await firebase.storage().ref(); //We get this from firebase storage where we have the reference
+      var uploadTask = storageRef
+        .child("images/" + file.name)
+        .put(resizedImage, metadata); //All these methods are there in firebase docs
 
       uploadTask.on(
         firebase.storage.TaskEvent.STATE_CHANGED,
@@ -135,15 +139,16 @@ const AddContact = () => {
         },
         () => {
           // Upload completed successfully, now we can get the download URL
-          uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
-            setDownloadUrl(downloadURL); //setting the state to download url which we get
-          })
+          uploadTask.snapshot.ref
+            .getDownloadURL().then((downloadURL) => {
+              setDownloadUrl(downloadURL); //setting the state to download url which we get
+            })
             .catch(error => console.log(error));
         }
 
       );
     }
-   /*********************************************************************************************************************** */ 
+    /*********************************************************************************************************************** */
     catch (error) {
       console.error(error);
       toast("Something went wrong", {
@@ -155,11 +160,45 @@ const AddContact = () => {
   // setting contact to firebase realtime DB
   const addContact = async () => {
     //TODO: add contact method
+    try {
+      //everything we do below is in firebase realtime database docs
+      //Here we grab the reference of the origin database and then we create the contacts inside it and then we set the object inside it
+      firebase
+        .database()
+        .ref("contacts/" + v4())
+        .set({
+          name,
+          email,
+          phoneNumber,
+          address,
+          picture: downloadUrl,
+          star
+        });
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   // to handle update the contact when there is contact in state and the user had came from clicking the contact update icon
   const updateContact = async () => {
     //TODO: update contact method
+    try {
+      //refer firebase docs. here we grab the reference of contacts(this time this wont be created as we already have one we just grab it) and then we get the contactToUpdateKey and then we just need to set the information again
+      firebase
+        .database()
+        .ref("contacts/" + contactToUpdateKey)
+        .set({
+          name,
+          email,
+          phoneNumber,
+          address,
+          picture: downloadUrl,
+          star
+        });
+    } catch (error) {
+      console.log(error);
+      toast("Oppss..", { type: "error" });
+    }
   };
 
   // firing when the user click on submit button or the form has been submitted
@@ -168,9 +207,10 @@ const AddContact = () => {
 
     // isUpdate wll be true when the user came to update the contact
     // when their is contact then updating and when no contact to update then adding contact
-    //TODO: set isUpdate value
-
-    // to handle the bug when the user visit again to add contact directly by visiting the link
+    // set isUpdate value
+    isUpdate ? updateContact() : addContact();
+    toast("success", {type:"success"});
+    // to handle the bug when the user visits again to add contact directly by visiting the link
     dispatch({
       type: CONTACT_TO_UPDATE,
       payload: null,
@@ -178,7 +218,7 @@ const AddContact = () => {
     });
 
     // after adding/updating contact then sending to the contacts
-    // TODO :- also sending when their is any errors
+    // also sending when their are any errors
     navigate("/");
   };
 
@@ -268,7 +308,7 @@ const AddContact = () => {
               block
               className="text-uppercase"
             >
-              {isUpdate ? "Update Contact" : "Add Contact"}
+              {isUpdate ? "Update Contact" : "Add Contact"} {/*if this vlaue is true then display the update contact else display the Add Contact */}
             </Button>
           </Form>
         </Col>
