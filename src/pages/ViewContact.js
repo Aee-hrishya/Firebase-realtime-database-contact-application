@@ -10,13 +10,14 @@ import {
   CardSubtitle
 } from "reactstrap";
 import { FaEnvelope, FaMapMarkerAlt, FaPhone } from "react-icons/fa";
-import { ContactContext } from "../context/Context";
+import  ContactContext  from "../context/Context";
 
 const ViewContact = () => {
   const { state } = useContext(ContactContext);
   // destructuring contact from the state
   // and rendering it in state
-  //FIXME: destructure contact from state
+  // destructure contact from state
+  const { contact } = state;
   return (
     <Container>
       <Row className="mt-5 mb-5">
@@ -50,7 +51,8 @@ const ViewContact = () => {
               <a
                 className="btn btn-primary btn-block"
                 target="_blank"
-                //TODO: add google maps
+                //add google maps
+                href={`https://maps.google.com?=${contact?.address}`}
               >
                 <FaMapMarkerAlt className="icon mr-2" />
                 {contact?.address}
