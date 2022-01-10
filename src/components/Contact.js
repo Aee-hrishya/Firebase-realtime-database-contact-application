@@ -8,46 +8,87 @@ import { FaRegStar, FaStar } from "react-icons/fa";
 import { MdDelete, MdEdit } from "react-icons/md";
 
 //TODO: add firebase
+import firebase from "firebase/app";
 
 // context stuffs
 //TODO: import context and action: update and single_contact
+import ContactContext from "../context/Context";
+import { CONTACT_TO_UPDATE, SET_SINGLE_CONTACT } from "../context/action.types";
 
-import { useHistory } from "react-router-dom";
+
+import { useNavigate } from "react-router-dom";
 
 import { toast } from "react-toastify";
 
 const Contact = ({ contact, contactKey }) => {
-  //TODO: destructuring dispatch from the context
+  // destructuring dispatch from the context
+  const { dispatch } = useContext(ContactContext);
 
-  // history hooks to get history
-  const history = useHistory();
+
+  // useNavigate hook to get history
+  const navigate = useNavigate();
 
   // to delete the contact when delete contact is clicked
   const deleteContact = () => {
-    //TODO: create this method from firebase
+    //refer firebase docs for this
+    //here we actually get the contacts withe the help of contactKey and then we remove that contact, upon removing a contact we get a callback in the form of promises from the database so we need to handle it
+    firebase
+      .database()
+      .ref(`/contacts/${contactKey}`)
+      .remove()
+      .then(() => {
+        toast("Deleted Successfully", { type: "warning" });
+      })
+      .catch(err => console.log(err));
   };
 
   // update the star/important contact ,ie, star it or unstar the single contact
   const updateImpContact = () => {
-    //TODO: update (star) contact, use contactKey
+    //update (star) contact, use contactKey
+    //refer firebase docs for the updation as well
+
+    firebase
+      .database()
+      .ref(`/contacts/${contactKey}`)
+      .update(
+        {
+          star: !contact.star
+        },
+        err => {
+          console.log(err);
+        }
+      )
+      .then(() => {
+        toast("Contact Updated", { type: "info" });
+      })
+      .catch(err => console.log(err));
   };
 
-  // when the update icon/ pen ion is clicked
+  // when the update icon/ pen icon is clicked
   const updateContact = () => {
     // dispatching one action to update contact
-    //TODO: use dispatch to update
+    // use dispatch to update
+    dispatch({
+      type: CONTACT_TO_UPDATE,
+      payload: contact,
+      key: contactKey
+    });
 
     // and pushing to the add contact screen
-    history.push("/contact/add");
+    navigate("/contact/add");
   };
 
   // to view a single contact in the contact/view screen
   const viewSingleContact = contact => {
     // setting single contact in state
     //TODO: use dispatch to view single contact
+    dispatch({
+      type: SET_SINGLE_CONTACT,
+      payload: contact
+    });
 
     // sending...
-    history.push("/contact/view");
+    navigate("/contact/view");
   };
 
   return (
@@ -75,10 +116,7 @@ const Contact = ({ contact, contactKey }) => {
           <div className="text-primary">{contact.name}</div>
 
           <div className="text-secondary">{contact.phoneNumber}</div>
-          <div className="text-secondary">
-            {/* {FIXME: display contact email}  */}
-          </div>
-
+          <div className="text-secondary">{contact.email}</div>
           <div className="text-info">{contact.address}</div>
         </Col>
         <Col
