@@ -3,7 +3,7 @@ import React, { useReducer, useEffect } from "react";
 import { Container, Col, Row } from "reactstrap";
 
 // react-router-dom3
-import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
+import { HashRouter as Router, Routes, Route, Link } from "react-router-dom";
 
 // react toastify stuffs
 import { ToastContainer, toast } from "react-toastify";
