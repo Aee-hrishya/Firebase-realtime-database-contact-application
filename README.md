@@ -1,3 +1,24 @@
+# Firebase realtime database contact application
+
+This is a simple project where a person can add his contacts and save them. Basically this acts as a personal phonebook.
+The user can even update the contacts and even star mark them. On clicking the location icon the location of the user is displayed
+on google maps.
+
+## Technologies used
+
+ - React js (Hooks(useContext, useReducer, useState, useEffect))
+ - Firebase (Email and password authentication, firebase storage, firebase realtime database)
+ - Bootstrap 5
+
+## Functionalities
+ 
+ - Adding a new contact
+ - Deleting existing contacts
+ - Editing the existing contacts
+ - Functionality of star marking
+ - Authentication done using firebase email and passsword hence unauthorized users cannot access
+ - Firebase Storage and realtime database to store the contacts 
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
