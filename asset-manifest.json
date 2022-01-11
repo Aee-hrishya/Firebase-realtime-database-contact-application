@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/Firebase-realtime-database-contact-application/static/css/main.9b4a8682.css",
+    "main.js": "/Firebase-realtime-database-contact-application/static/js/main.54962224.js",
+    "static/js/787.51c60fd2.chunk.js": "/Firebase-realtime-database-contact-application/static/js/787.51c60fd2.chunk.js",
+    "index.html": "/Firebase-realtime-database-contact-application/index.html",
+    "main.9b4a8682.css.map": "/Firebase-realtime-database-contact-application/static/css/main.9b4a8682.css.map",
+    "main.54962224.js.map": "/Firebase-realtime-database-contact-application/static/js/main.54962224.js.map",
+    "787.51c60fd2.chunk.js.map": "/Firebase-realtime-database-contact-application/static/js/787.51c60fd2.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.9b4a8682.css",
+    "static/js/main.54962224.js"
+  ]
+}
